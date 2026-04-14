@@ -116,14 +116,41 @@ return Math.round(val/10)*10;
 }
 
 function login(){
-const id=document.getElementById('studentId').value;
-if(!id)return alert('Enter ID');
-localStorage.setItem('user',id);
-document.getElementById('loginBox').style.display='none';
-document.getElementById('deptBtns').style.display='flex';
-document.getElementById('searchBox').style.display='block';
-}
+  const name = document.getElementById('name').value.trim();
+  const id = document.getElementById('studentId').value.trim();
+  const dept = document.getElementById('dept').value.trim();
+  const sem = document.getElementById('semester').value.trim();
 
+  // empty check
+  if(!name || !id || !dept || !sem){
+    return alert('Fill all fields');
+  }
+
+  // name should not be only numbers
+  if(!isNaN(name)){
+    return alert('Name cannot be only numbers');
+  }
+
+  // ID must be exactly 8 digits
+  if(!/^\d{8}$/.test(id)){
+    return alert('Student ID must be exactly 8 digits');
+  }
+
+  // department should not be only numbers
+  if(!isNaN(dept)){
+    return alert('Department cannot be only numbers');
+  }
+
+  // save user
+  localStorage.setItem('user', JSON.stringify({
+    name, id, dept, sem
+  }));
+
+  // UI switch
+  document.getElementById('loginBox').style.display='none';
+  document.getElementById('deptBtns').style.display='flex';
+  document.getElementById('searchBox').style.display='block';
+}
 async function loadDept(dept){
   await loadReviewsFromFirebase();
   renderList(data[dept]);
@@ -206,7 +233,15 @@ function convert(val){
 if(val==='Good') return 100;
 if(val==='Average') return 60;
 return 30;
-}
+}  window.addEventListener('load', ()=>{
+  const user = localStorage.getItem('user');
+
+  if(user){
+    document.getElementById('loginBox').style.display='none';
+    document.getElementById('deptBtns').style.display='flex';
+    document.getElementById('searchBox').style.display='block';
+  }
+});
 
 async function submitReview(index){
   const b=ratingsStore['b'+index];
