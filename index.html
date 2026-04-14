@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faculty Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+body{font-family:Poppins;margin:0;background:linear-gradient(135deg,#eef2f7,#e3e9f3);} 
+header{background:linear-gradient(90deg,#1e3c72,#2a5298);color:white;padding:20px;text-align:center;font-size:22px;font-weight:600;}
+.container{padding:20px;max-width:1100px;margin:auto;}
+
+.login{background:white;padding:25px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.1);margin-bottom:20px;display:flex;flex-direction:column;gap:10px;max-width:350px;margin:auto;}
+input{padding:10px;border-radius:8px;border:1px solid #ccc;}
+button{padding:8px 12px;border:none;border-radius:8px;cursor:pointer;font-weight:500;}
+.login button{background:#2ecc71;color:white;}
+
+.search{margin:15px auto;max-width:400px;display:none;}
+.search input{width:100%;}
+
+.departments{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0;justify-content:center;}
+.departments button{background:#3498db;color:white;font-size:14px;padding:12px 18px;border-radius:12px;}
+
+.faculty-card{background:white;padding:20px;margin-top:20px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.08);display:flex;gap:20px;}
+.faculty-card img{width:110px;height:110px;border-radius:15px;}
+.ratings{display:flex;gap:15px;margin:10px 0;}
+
+.circle{width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;position:relative;}
+.circle::before{content:"";position:absolute;width:100%;height:100%;border-radius:50%;background:conic-gradient(var(--color) var(--percent), #eee 0);} 
+.circle::after{content:"";position:absolute;width:50px;height:50px;background:white;border-radius:50%;}
+.circle span{position:relative;z-index:2;font-size:13px;}
+
+.rating-buttons{display:flex;gap:8px;margin-top:5px;}
+.rating-buttons button{flex:1;background:#ecf0f1;}
+.rating-buttons button.active{background:#2ecc71;color:white;}
+
+textarea{width:100%;margin-top:5px;padding:8px;border-radius:8px;border:1px solid #ccc;}
+.submit{background:#27ae60;color:white;margin-top:8px;width:100%;}
+.comments{margin-top:10px;background:#f9fafc;padding:10px;border-radius:10px;max-height:120px;overflow:auto;font-size:13px;}
+.course{font-size:13px;color:#555;margin-top:8px;}
+.overall{font-weight:600;margin-top:5px;}
+</style>
+</head>
+<body>
+
+<header>Faculty Review System</header>
+
+<div class="container">
+
+<div class="login" id="loginBox">
+<input id="name" placeholder="Name">
+<input id="studentId" placeholder="Student ID">
+<input id="dept" placeholder="Department">
+<input id="semester" placeholder="Semester">
+<button onclick="login()">Enter</button>
+</div>
+
+<div class="search" id="searchBox">
+<input type="text" placeholder="Search faculty or course..." oninput="searchFaculty(this.value)">
+</div>
+
+<div class="departments" style="display:none" id="deptBtns">
+<button onclick="loadDept('CSE')">BCSE</button>
+</div>
+
+<div id="facultyList"></div>
+</div>
+
+<script>
+const data={
+CSE:[
+{name:"Dr Abhijit Saha",img:"https://via.placeholder.com/120",courses:["CSE2201"],ratings:{behavior:75,lecture:78,helpful:80},comments:[]},
+{name:"Dr Rashedul Islam",img:"https://via.placeholder.com/120",courses:["CSE2301"],ratings:{behavior:72,lecture:74,helpful:73},comments:[]},
+{name:"Shahinur Alam",img:"https://via.placeholder.com/120",courses:["CSE1201"],ratings:{behavior:68,lecture:70,helpful:69},comments:[]},
+{name:"Dr Ishtiak Al Mamoon",img:"https://via.placeholder.com/120",courses:["CSE3301"],ratings:{behavior:85,lecture:82,helpful:88},comments:[]},
+{name:"Dr Abdul Awal",img:"https://via.placeholder.com/120",courses:["CSE2101"],ratings:{behavior:78,lecture:76,helpful:77},comments:[]}
+]
+};
+
+function getColor(val){
+if(val<40)return '#e74c3c';
+if(val<60)return '#e67e22';
+if(val<70)return '#f1c40f';
+return '#2ecc71';}
+
+function getLabel(score){
+if(score>=90) return 'Excellent';
+if(score>=80) return 'Superb';
+if(score>=65) return 'Good';
+if(score>=50) return 'Mediocre';
+return 'Bad';
+}
+
+function roundScore(val){
+return Math.round(val/10)*10;
+}
+
+function login(){
+const id=document.getElementById('studentId').value;
+if(!id)return alert('Enter ID');
+localStorage.setItem('user',id);
+document.getElementById('loginBox').style.display='none';
+document.getElementById('deptBtns').style.display='flex';
+document.getElementById('searchBox').style.display='block';
+}
+
+function loadDept(dept){
+renderList(data[dept]);
+}
+
+function renderList(listData){
+const list=document.getElementById('facultyList');
+list.innerHTML='';
+
+listData.forEach((f,index)=>{
+const overall=Math.round((f.ratings.behavior+f.ratings.lecture+f.ratings.helpful)/3);
+const rounded=roundScore(overall);
+
+const card=document.createElement('div');
+card.className='faculty-card';
+card.innerHTML=`
+<img src="${f.img}">
+<div style="flex:1">
+<h3>${f.name}</h3>
+<div class="overall">⭐ ${rounded}% (${getLabel(overall)})</div>
+
+<div class="ratings">
+${makeCircle(f.ratings.behavior)}
+${makeCircle(f.ratings.lecture)}
+${makeCircle(f.ratings.helpful)}
+</div>
+
+<label>Behavior:</label>
+${ratingButtons('b'+index)}
+
+<label>Lecture:</label>
+${ratingButtons('l'+index)}
+
+<label>Helpful:</label>
+${ratingButtons('h'+index)}
+
+<textarea id="c${index}" placeholder="Anonymous feedback..."></textarea>
+<button class="submit" onclick="submitReview(${index})">Submit</button>
+
+<div class="course">Courses: ${f.courses.join(', ')}</div>
+
+<div class="comments">${f.comments.map(function(c){ return '<p>• '+c+'</p>'; }).join('')}</div>
+</div>`;
+
+list.appendChild(card);
+});
+}
+
+function searchFaculty(query){
+query=query.toLowerCase();
+const filtered=data.CSE.filter(f=>
+f.name.toLowerCase().includes(query)||
+f.courses.join('').toLowerCase().includes(query)
+);
+renderList(filtered);
+}
+
+function makeCircle(val){
+return `<div class="circle" style="--percent:${val}%;--color:${getColor(val)}"><span>${roundScore(val)}%</span></div>`;
+}
+
+function ratingButtons(id){
+return `
+<div class="rating-buttons">
+<button onclick="setRating('${id}','Good',this)">👍 Good</button>
+<button onclick="setRating('${id}','Average',this)">😐 Avg</button>
+<button onclick="setRating('${id}','Bad',this)">👎 Bad</button>
+</div>`;
+}
+
+const ratingsStore={};
+
+function setRating(id,value,btn){
+ratingsStore[id]=value;
+Array.from(btn.parentElement.children).forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+}
+
+function convert(val){
+if(val==='Good') return 100;
+if(val==='Average') return 60;
+return 30;
+}
+
+function submitReview(index){
+const b=ratingsStore['b'+index];
+const l=ratingsStore['l'+index];
+const h=ratingsStore['h'+index];
+const c=document.getElementById('c'+index).value;
+
+if(!b||!l||!h) return alert('Select all ratings');
+
+const f=data.CSE[index];
+
+f.ratings.behavior=Math.round((f.ratings.behavior+convert(b))/2);
+f.ratings.lecture=Math.round((f.ratings.lecture+convert(l))/2);
+f.ratings.helpful=Math.round((f.ratings.helpful+convert(h))/2);
+
+if(c) f.comments.push(c);
+
+renderList(data.CSE);
+}
+</script>
+
+</body>
+</html>
