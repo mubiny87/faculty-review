@@ -70,7 +70,7 @@ textarea{width:100%;margin-top:5px;padding:8px;border-radius:8px;border:1px soli
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBdznGTj7SNdwJpwTQ033SvvFVcWefxPI8",
@@ -124,8 +124,9 @@ document.getElementById('deptBtns').style.display='flex';
 document.getElementById('searchBox').style.display='block';
 }
 
-function loadDept(dept){
-renderList(data[dept]);
+async function loadDept(dept){
+  await loadReviewsFromFirebase();
+  renderList(data[dept]);
 }
 
 function renderList(listData){
@@ -208,34 +209,59 @@ return 30;
 }
 
 async function submitReview(index){
-const b=ratingsStore['b'+index];
-const l=ratingsStore['l'+index];
-const h=ratingsStore['h'+index];
-const c=document.getElementById('c'+index).value;
+  const b=ratingsStore['b'+index];
+  const l=ratingsStore['l'+index];
+  const h=ratingsStore['h'+index];
+  const c=document.getElementById('c'+index).value;
 
-if(!b||!l||!h) return alert('Select all ratings');
+  if(!b||!l||!h) return alert('Select all ratings');
 
-const f=data.CSE[index];
+  const f=data.CSE[index];
 
-try{
-  console.log("Sending to Firebase...");
+  try{
+    console.log("Sending to Firebase...");
 
-  const docRef = await addDoc(collection(db, "reviews"), {
-    faculty: f.name,
-    behavior: b,
-    lecture: l,
-    helpful: h,
-    comment: c,
-    time: Date.now()
-  });
+    const docRef = await addDoc(collection(db, "reviews"), {
+      faculty: f.name,
+      behavior: b,
+      lecture: l,
+      helpful: h,
+      comment: c,
+      time: Date.now()
+    });
 
-  console.log("Saved with ID:", docRef.id);
-  alert("Review saved ✅");
+    console.log("Saved with ID:", docRef.id);
+    alert("Review saved ✅");
 
-}catch(error){
-  console.error("Firebase error:", error);
-  alert("Check console (F12)");
+    // reload data from firebase
+    await loadReviewsFromFirebase();
+    renderList(data.CSE);
+
+  }catch(error){
+    console.error("Firebase error:", error);
+    alert("Check console (F12)");
+  }
 }
+
+async function loadReviewsFromFirebase(){
+  const snapshot = await getDocs(collection(db, "reviews"));
+
+  // reset comments
+  data.CSE.forEach(f=>f.comments=[]);
+
+  snapshot.forEach(doc=>{
+    const r = doc.data();
+
+    const faculty = data.CSE.find(f=>f.name===r.faculty);
+    if(faculty){
+      if(r.comment) faculty.comments.push(r.comment);
+
+      // update ratings roughly
+      faculty.ratings.behavior = Math.round((faculty.ratings.behavior + convert(r.behavior))/2);
+      faculty.ratings.lecture = Math.round((faculty.ratings.lecture + convert(r.lecture))/2);
+      faculty.ratings.helpful = Math.round((faculty.ratings.helpful + convert(r.helpful))/2);
+    }
+  });
 }
 
 // expose AFTER defining
