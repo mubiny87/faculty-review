@@ -66,7 +66,27 @@ textarea{width:100%;margin-top:5px;padding:8px;border-radius:8px;border:1px soli
 <div id="facultyList"></div>
 </div>
 
-<script>
+<!-- Firebase SDK -->
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBdznGTj7SNdwJpwTQ033SvvFVcWefxPI8",
+  authDomain: "faculty-review-e7130.firebaseapp.com",
+  projectId: "faculty-review-e7130",
+  storageBucket: "faculty-review-e7130.firebasestorage.app",
+  messagingSenderId: "939366308662",
+  appId: "1:939366308662:web:7a37adcfd94e92241d3197",
+  
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ===== YOUR EXISTING CODE =====
+
 const data={
 CSE:[
 {name:"Dr Abhijit Saha",img:"https://via.placeholder.com/120",courses:["CSE2201"],ratings:{behavior:75,lecture:78,helpful:80},comments:[]},
@@ -144,7 +164,7 @@ ${ratingButtons('h'+index)}
 
 <div class="course">Courses: ${f.courses.join(', ')}</div>
 
-<div class="comments">${f.comments.map(function(c){ return '<p>• '+c+'</p>'; }).join('')}</div>
+<div class="comments">${f.comments.map(c=>`<p>• ${c}</p>`).join('')}</div>
 </div>`;
 
 list.appendChild(card);
@@ -187,7 +207,7 @@ if(val==='Average') return 60;
 return 30;
 }
 
-function submitReview(index){
+async function submitReview(index){
 const b=ratingsStore['b'+index];
 const l=ratingsStore['l'+index];
 const h=ratingsStore['h'+index];
@@ -197,14 +217,33 @@ if(!b||!l||!h) return alert('Select all ratings');
 
 const f=data.CSE[index];
 
-f.ratings.behavior=Math.round((f.ratings.behavior+convert(b))/2);
-f.ratings.lecture=Math.round((f.ratings.lecture+convert(l))/2);
-f.ratings.helpful=Math.round((f.ratings.helpful+convert(h))/2);
+try{
+  console.log("Sending to Firebase...");
 
-if(c) f.comments.push(c);
+  const docRef = await addDoc(collection(db, "reviews"), {
+    faculty: f.name,
+    behavior: b,
+    lecture: l,
+    helpful: h,
+    comment: c,
+    time: Date.now()
+  });
 
-renderList(data.CSE);
+  console.log("Saved with ID:", docRef.id);
+  alert("Review saved ✅");
+
+}catch(error){
+  console.error("Firebase error:", error);
+  alert("Check console (F12)");
 }
+}
+
+// expose AFTER defining
+window.submitReview = submitReview;
+window.setRating = setRating;
+window.login = login;
+window.loadDept = loadDept;
+
 </script>
 
 </body>
