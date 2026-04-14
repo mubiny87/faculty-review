@@ -9,44 +9,25 @@
 body{font-family:Poppins;margin:0;background:linear-gradient(135deg,#eef2f7,#e3e9f3);} 
 header{background:linear-gradient(90deg,#1e3c72,#2a5298);color:white;padding:20px;text-align:center;font-size:22px;font-weight:600;}
 .container{padding:20px;max-width:1100px;margin:auto;}
-
 .login{background:white;padding:25px;border-radius:15px;box-shadow:0 5px 20px rgba(0,0,0,0.1);margin-bottom:20px;display:flex;flex-direction:column;gap:10px;max-width:350px;margin:auto;}
 input{padding:10px;border-radius:8px;border:1px solid #ccc;}
 button{padding:8px 12px;border:none;border-radius:8px;cursor:pointer;font-weight:500;}
 .login button{background:#2ecc71;color:white;}
-
 .search{margin:15px auto;max-width:400px;display:none;}
 .search input{width:100%;}
-
 .departments{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0;justify-content:center;}
 .departments button{background:#3498db;color:white;font-size:14px;padding:12px 18px;border-radius:12px;}
-
 .faculty-card{background:white;padding:20px;margin-top:20px;border-radius:20px;box-shadow:0 10px 30px rgba(0,0,0,0.08);display:flex;gap:20px;}
 .faculty-card img{width:110px;height:110px;border-radius:15px;}
-.ratings{display:flex;gap:15px;margin:10px 0;}
-
-.circle{width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;position:relative;}
-.circle::before{content:"";position:absolute;width:100%;height:100%;border-radius:50%;background:conic-gradient(var(--color) var(--percent), #eee 0);} 
-.circle::after{content:"";position:absolute;width:50px;height:50px;background:white;border-radius:50%;}
-.circle span{position:relative;z-index:2;font-size:13px;}
-
-.rating-buttons{display:flex;gap:8px;margin-top:5px;}
-.rating-buttons button{flex:1;background:#ecf0f1;}
-.rating-buttons button.active{background:#2ecc71;color:white;}
-
-textarea{width:100%;margin-top:5px;padding:8px;border-radius:8px;border:1px solid #ccc;}
-.submit{background:#27ae60;color:white;margin-top:8px;width:100%;}
-.comments{margin-top:10px;background:#f9fafc;padding:10px;border-radius:10px;max-height:120px;overflow:auto;font-size:13px;}
-.course{font-size:13px;color:#555;margin-top:8px;}
-.overall{font-weight:600;margin-top:5px;}
 </style>
 </head>
 <body>
-
-<header>Faculty Review System</header>
+<header>
+  Faculty Review System
+  <button onclick="logout()" style="float:right;background:#e74c3c;color:white;">Logout</button>
+</header>
 
 <div class="container">
-
 <div class="login" id="loginBox">
 <input id="name" placeholder="Name">
 <input id="studentId" placeholder="Student ID">
@@ -66,11 +47,9 @@ textarea{width:100%;margin-top:5px;padding:8px;border-radius:8px;border:1px soli
 <div id="facultyList"></div>
 </div>
 
-<!-- Firebase SDK -->
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBdznGTj7SNdwJpwTQ033SvvFVcWefxPI8",
@@ -78,186 +57,51 @@ const firebaseConfig = {
   projectId: "faculty-review-e7130",
   storageBucket: "faculty-review-e7130.firebasestorage.app",
   messagingSenderId: "939366308662",
-  appId: "1:939366308662:web:7a37adcfd94e92241d3197",
-  
+  appId: "1:939366308662:web:7a37adcfd94e92241d3197"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+initializeApp(firebaseConfig);
+getFirestore();
 
-// ===== YOUR EXISTING CODE =====
-
+const data={
 CSE:[
-{name:"Dr Abhijit Saha",img:"https://via.placeholder.com/120",courses:["CSE2201"],ratings:{behavior:75,lecture:78,helpful:80},comments:[]},
-{name:"Dr Rashedul Islam",img:"https://via.placeholder.com/120",courses:["CSE2301"],ratings:{behavior:72,lecture:74,helpful:73},comments:[]},
-{name:"Shahinur Alam",img:"https://via.placeholder.com/120",courses:["CSE1201"],ratings:{behavior:68,lecture:70,helpful:69},comments:[]},
-{name:"Dr Ishtiak Al Mamoon",img:"https://via.placeholder.com/120",courses:["CSE3301"],ratings:{behavior:85,lecture:82,helpful:88},comments:[]},
-{name:"Dr Abdul Awal",img:"https://via.placeholder.com/120",courses:["CSE2101"],ratings:{behavior:78,lecture:76,helpful:77},comments:[]},
-
-{name:"Krishna Das",img:"https://via.placeholder.com/120",courses:["CSE3101"],ratings:{behavior:70,lecture:72,helpful:71},comments:[]},
-{name:"Arifa Tur Rahman",img:"https://via.placeholder.com/120",courses:["CSE2202"],ratings:{behavior:82,lecture:80,helpful:83},comments:[]},
-{name:"Md Alomgir Hossain",img:"https://via.placeholder.com/120",courses:["CSE4101"],ratings:{behavior:76,lecture:75,helpful:77},comments:[]},
-{name:"Ferdaus Anam Jibon",img:"https://via.placeholder.com/120",courses:["CSE3201"],ratings:{behavior:74,lecture:73,helpful:75},comments:[]},
-{name:"Saidur Rahman",img:"https://via.placeholder.com/120",courses:["CSE2102"],ratings:{behavior:71,lecture:72,helpful:70},comments:[]},
-
-{name:"Dr Md Shafenoor Amin",img:"https://via.placeholder.com/120",courses:["CSE3302"],ratings:{behavior:79,lecture:78,helpful:80},comments:[]},
-{name:"Rubayea Ferdows",img:"https://via.placeholder.com/120",courses:["CSE2203"],ratings:{behavior:77,lecture:76,helpful:78},comments:[]},
-{name:"M M Rakibul Hasan",img:"https://via.placeholder.com/120",courses:["CSE2302"],ratings:{behavior:73,lecture:74,helpful:72},comments:[]},
-{name:"Toyeer E Ferdous",img:"https://via.placeholder.com/120",courses:["CSE1202"],ratings:{behavior:75,lecture:74,helpful:76},comments:[]},
-{name:"Dr Golam Morshed",img:"https://via.placeholder.com/120",courses:["CSE4102"],ratings:{behavior:81,lecture:82,helpful:80},comments:[]},
-
-{name:"Tanzina Tasnim Bithi",img:"https://via.placeholder.com/120",courses:["CSE1101"],ratings:{behavior:74,lecture:73,helpful:75},comments:[]},
-{name:"Suhala Lamia",img:"https://via.placeholder.com/120",courses:["CSE1203"],ratings:{behavior:76,lecture:75,helpful:77},comments:[]},
-{name:"Md Alamin Talukder",img:"https://via.placeholder.com/120",courses:["CSE2103"],ratings:{behavior:72,lecture:73,helpful:71},comments:[]},
-{name:"Mousumi Ahmed Mimi",img:"https://via.placeholder.com/120",courses:["CSE2204"],ratings:{behavior:78,lecture:77,helpful:79},comments:[]},
-{name:"Nusrath Tabassum",img:"https://via.placeholder.com/120",courses:["CSE2303"],ratings:{behavior:75,lecture:74,helpful:76},comments:[]},
-
-{name:"Md Hasibul Islam",img:"https://via.placeholder.com/120",courses:["CSE3102"],ratings:{behavior:73,lecture:72,helpful:74},comments:[]},
-{name:"A.S.M. Shakil Ahamed",img:"https://via.placeholder.com/120",courses:["CSE3202"],ratings:{behavior:77,lecture:76,helpful:78},comments:[]},
-{name:"Jabunnesa Jahan Sara",img:"https://via.placeholder.com/120",courses:["CSE1102"],ratings:{behavior:76,lecture:75,helpful:77},comments:[]},
-{name:"D.M Arif Afsar",img:"https://via.placeholder.com/120",courses:["CSE1204"],ratings:{behavior:74,lecture:73,helpful:75},comments:[]},
-{name:"Faniyam Maria Mansia",img:"https://via.placeholder.com/120",courses:["CSE1301"],ratings:{behavior:78,lecture:77,helpful:79},comments:[]}
+{name:"Dr Abhijit Saha",img:"https://via.placeholder.com/120",courses:["CSE2201"]},
+{name:"Dr Rashedul Islam",img:"https://via.placeholder.com/120",courses:["CSE2301"]},
+{name:"Shahinur Alam",img:"https://via.placeholder.com/120",courses:["CSE1201"]},
+{name:"Dr Ishtiak Al Mamoon",img:"https://via.placeholder.com/120",courses:["CSE3301"]},
+{name:"Dr Abdul Awal",img:"https://via.placeholder.com/120",courses:["CSE2101"]},
+{name:"Krishna Das",img:"https://via.placeholder.com/120",courses:["CSE3101"]},
+{name:"Arifa Tur Rahman",img:"https://via.placeholder.com/120",courses:["CSE2202"]},
+{name:"Md Alomgir Hossain",img:"https://via.placeholder.com/120",courses:["CSE4101"]},
+{name:"Ferdaus Anam Jibon",img:"https://via.placeholder.com/120",courses:["CSE3201"]},
+{name:"Saidur Rahman",img:"https://via.placeholder.com/120",courses:["CSE2102"]}
 ]
 
-function getColor(val){
-if(val<40)return '#e74c3c';
-if(val<60)return '#e67e22';
-if(val<70)return '#f1c40f';
-return '#2ecc71';}
-
-function getLabel(score){
-if(score>=90) return 'Excellent';
-if(score>=80) return 'Superb';
-if(score>=65) return 'Good';
-if(score>=50) return 'Mediocre';
-return 'Bad';
-}
-
-function roundScore(val){
-return Math.round(val/10)*10;
-}
-
 function login(){
-  const name = document.getElementById('name').value.trim();
-  const id = document.getElementById('studentId').value.trim();
-  const dept = document.getElementById('dept').value.trim();
-  const sem = document.getElementById('semester').value.trim();
+  const name=document.getElementById('name').value.trim();
+  const id=document.getElementById('studentId').value.trim();
+  const dept=document.getElementById('dept').value.trim();
+  const sem=document.getElementById('semester').value.trim();
 
-  // empty check
-  if(!name || !id || !dept || !sem){
-    return alert('Fill all fields');
-  }
+  if(!name||!id||!dept||!sem) return alert('Fill all fields');
 
-  // name should not be only numbers
-  if(!isNaN(name)){
-    return alert('Name cannot be only numbers');
-  }
+  localStorage.setItem('user',JSON.stringify({name,id,dept,sem}));
 
-  // ID must be exactly 8 digits
-  if(!/^\d{8}$/.test(id)){
-    return alert('Student ID must be exactly 8 digits');
-  }
-
-  // department should not be only numbers
-  if(!isNaN(dept)){
-    return alert('Department cannot be only numbers');
-  }
-
-  // save user
-  localStorage.setItem('user', JSON.stringify({
-    name, id, dept, sem
-  }));
-
-  // UI switch
   document.getElementById('loginBox').style.display='none';
   document.getElementById('deptBtns').style.display='flex';
   document.getElementById('searchBox').style.display='block';
 }
-async function loadDept(dept){
-  await loadReviewsFromFirebase();
-  renderList(data[dept]);
+
+function logout(){
+  localStorage.removeItem('user');
+  document.getElementById('loginBox').style.display='flex';
+  document.getElementById('deptBtns').style.display='none';
+  document.getElementById('searchBox').style.display='none';
+  document.getElementById('facultyList').innerHTML='';
 }
 
-function renderList(listData){
-const list=document.getElementById('facultyList');
-list.innerHTML='';
-
-listData.forEach((f,index)=>{
-const overall=Math.round((f.ratings.behavior+f.ratings.lecture+f.ratings.helpful)/3);
-const rounded=roundScore(overall);
-
-const card=document.createElement('div');
-card.className='faculty-card';
-card.innerHTML=`
-<img src="${f.img}">
-<div style="flex:1">
-<h3>${f.name}</h3>
-<div class="overall">⭐ ${rounded}% (${getLabel(overall)})</div>
-
-<div class="ratings">
-${makeCircle(f.ratings.behavior)}
-${makeCircle(f.ratings.lecture)}
-${makeCircle(f.ratings.helpful)}
-</div>
-
-<label>Behavior:</label>
-${ratingButtons('b'+index)}
-
-<label>Lecture:</label>
-${ratingButtons('l'+index)}
-
-<label>Helpful:</label>
-${ratingButtons('h'+index)}
-
-<textarea id="c${index}" placeholder="Anonymous feedback..."></textarea>
-<button class="submit" onclick="submitReview(${index})">Submit</button>
-
-<div class="course">Courses: ${f.courses.join(', ')}</div>
-
-<div class="comments">${f.comments.map(c=>`<p>• ${c}</p>`).join('')}</div>
-</div>`;
-
-list.appendChild(card);
-});
-}
-
-function searchFaculty(query){
-query=query.toLowerCase();
-const filtered=data.CSE.filter(f=>
-f.name.toLowerCase().includes(query)||
-f.courses.join('').toLowerCase().includes(query)
-);
-renderList(filtered);
-}
-
-function makeCircle(val){
-return `<div class="circle" style="--percent:${val}%;--color:${getColor(val)}"><span>${roundScore(val)}%</span></div>`;
-}
-
-function ratingButtons(id){
-return `
-<div class="rating-buttons">
-<button onclick="setRating('${id}','Good',this)">👍 Good</button>
-<button onclick="setRating('${id}','Average',this)">😐 Avg</button>
-<button onclick="setRating('${id}','Bad',this)">👎 Bad</button>
-</div>`;
-}
-
-const ratingsStore={};
-
-function setRating(id,value,btn){
-ratingsStore[id]=value;
-Array.from(btn.parentElement.children).forEach(b=>b.classList.remove('active'));
-btn.classList.add('active');
-}
-
-function convert(val){
-if(val==='Good') return 100;
-if(val==='Average') return 60;
-return 30;
-}  window.addEventListener('load', ()=>{
-  const user = localStorage.getItem('user');
-
+window.addEventListener('load',()=>{
+  const user=localStorage.getItem('user');
   if(user){
     document.getElementById('loginBox').style.display='none';
     document.getElementById('deptBtns').style.display='flex';
@@ -265,69 +109,42 @@ return 30;
   }
 });
 
-async function submitReview(index){
-  const b=ratingsStore['b'+index];
-  const l=ratingsStore['l'+index];
-  const h=ratingsStore['h'+index];
-  const c=document.getElementById('c'+index).value;
-
-  if(!b||!l||!h) return alert('Select all ratings');
-
-  const f=data.CSE[index];
-
-  try{
-    console.log("Sending to Firebase...");
-
-    const docRef = await addDoc(collection(db, "reviews"), {
-      faculty: f.name,
-      behavior: b,
-      lecture: l,
-      helpful: h,
-      comment: c,
-      time: Date.now()
-    });
-
-    console.log("Saved with ID:", docRef.id);
-    alert("Review saved ✅");
-
-    // reload data from firebase
-    await loadReviewsFromFirebase();
-    renderList(data.CSE);
-
-  }catch(error){
-    console.error("Firebase error:", error);
-    alert("Check console (F12)");
-  }
+function loadDept(dept){
+  renderList(data[dept]);
 }
 
-async function loadReviewsFromFirebase(){
-  const snapshot = await getDocs(collection(db, "reviews"));
+function renderList(listData){
+  const list=document.getElementById('facultyList');
+  list.innerHTML='';
 
-  // reset comments
-  data.CSE.forEach(f=>f.comments=[]);
+  listData.forEach(f=>{
+    const card=document.createElement('div');
+    card.className='faculty-card';
+    card.innerHTML=`
+    <img src="${f.img}">
+    <div style="flex:1">
+    <h3>${f.name}</h3>
+    <div>Courses: ${f.courses.join(', ')}</div>
+    </div>`;
 
-  snapshot.forEach(doc=>{
-    const r = doc.data();
-
-    const faculty = data.CSE.find(f=>f.name===r.faculty);
-    if(faculty){
-      if(r.comment) faculty.comments.push(r.comment);
-
-      // update ratings roughly
-      faculty.ratings.behavior = Math.round((faculty.ratings.behavior + convert(r.behavior))/2);
-      faculty.ratings.lecture = Math.round((faculty.ratings.lecture + convert(r.lecture))/2);
-      faculty.ratings.helpful = Math.round((faculty.ratings.helpful + convert(r.helpful))/2);
-    }
+    list.appendChild(card);
   });
 }
 
-// expose AFTER defining
-window.submitReview = submitReview;
-window.setRating = setRating;
-window.login = login;
-window.loadDept = loadDept;
+function searchFaculty(query){
+  query=query.toLowerCase();
+  const filtered=data.CSE.filter(f=>
+    f.name.toLowerCase().includes(query)||
+    f.courses.join('').toLowerCase().includes(query)
+  );
+  renderList(filtered);
+}
+
+window.login=login;
+window.logout=logout;
+window.loadDept=loadDept;
+window.searchFaculty=searchFaculty;
 
 </script>
-
 </body>
 </html>
