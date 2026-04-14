@@ -87,15 +87,37 @@ const db = getFirestore(app);
 
 // ===== YOUR EXISTING CODE =====
 
-const data={
 CSE:[
 {name:"Dr Abhijit Saha",img:"https://via.placeholder.com/120",courses:["CSE2201"],ratings:{behavior:75,lecture:78,helpful:80},comments:[]},
 {name:"Dr Rashedul Islam",img:"https://via.placeholder.com/120",courses:["CSE2301"],ratings:{behavior:72,lecture:74,helpful:73},comments:[]},
 {name:"Shahinur Alam",img:"https://via.placeholder.com/120",courses:["CSE1201"],ratings:{behavior:68,lecture:70,helpful:69},comments:[]},
 {name:"Dr Ishtiak Al Mamoon",img:"https://via.placeholder.com/120",courses:["CSE3301"],ratings:{behavior:85,lecture:82,helpful:88},comments:[]},
-{name:"Dr Abdul Awal",img:"https://via.placeholder.com/120",courses:["CSE2101"],ratings:{behavior:78,lecture:76,helpful:77},comments:[]}
+{name:"Dr Abdul Awal",img:"https://via.placeholder.com/120",courses:["CSE2101"],ratings:{behavior:78,lecture:76,helpful:77},comments:[]},
+
+{name:"Krishna Das",img:"https://via.placeholder.com/120",courses:["CSE3101"],ratings:{behavior:70,lecture:72,helpful:71},comments:[]},
+{name:"Arifa Tur Rahman",img:"https://via.placeholder.com/120",courses:["CSE2202"],ratings:{behavior:82,lecture:80,helpful:83},comments:[]},
+{name:"Md Alomgir Hossain",img:"https://via.placeholder.com/120",courses:["CSE4101"],ratings:{behavior:76,lecture:75,helpful:77},comments:[]},
+{name:"Ferdaus Anam Jibon",img:"https://via.placeholder.com/120",courses:["CSE3201"],ratings:{behavior:74,lecture:73,helpful:75},comments:[]},
+{name:"Saidur Rahman",img:"https://via.placeholder.com/120",courses:["CSE2102"],ratings:{behavior:71,lecture:72,helpful:70},comments:[]},
+
+{name:"Dr Md Shafenoor Amin",img:"https://via.placeholder.com/120",courses:["CSE3302"],ratings:{behavior:79,lecture:78,helpful:80},comments:[]},
+{name:"Rubayea Ferdows",img:"https://via.placeholder.com/120",courses:["CSE2203"],ratings:{behavior:77,lecture:76,helpful:78},comments:[]},
+{name:"M M Rakibul Hasan",img:"https://via.placeholder.com/120",courses:["CSE2302"],ratings:{behavior:73,lecture:74,helpful:72},comments:[]},
+{name:"Toyeer E Ferdous",img:"https://via.placeholder.com/120",courses:["CSE1202"],ratings:{behavior:75,lecture:74,helpful:76},comments:[]},
+{name:"Dr Golam Morshed",img:"https://via.placeholder.com/120",courses:["CSE4102"],ratings:{behavior:81,lecture:82,helpful:80},comments:[]},
+
+{name:"Tanzina Tasnim Bithi",img:"https://via.placeholder.com/120",courses:["CSE1101"],ratings:{behavior:74,lecture:73,helpful:75},comments:[]},
+{name:"Suhala Lamia",img:"https://via.placeholder.com/120",courses:["CSE1203"],ratings:{behavior:76,lecture:75,helpful:77},comments:[]},
+{name:"Md Alamin Talukder",img:"https://via.placeholder.com/120",courses:["CSE2103"],ratings:{behavior:72,lecture:73,helpful:71},comments:[]},
+{name:"Mousumi Ahmed Mimi",img:"https://via.placeholder.com/120",courses:["CSE2204"],ratings:{behavior:78,lecture:77,helpful:79},comments:[]},
+{name:"Nusrath Tabassum",img:"https://via.placeholder.com/120",courses:["CSE2303"],ratings:{behavior:75,lecture:74,helpful:76},comments:[]},
+
+{name:"Md Hasibul Islam",img:"https://via.placeholder.com/120",courses:["CSE3102"],ratings:{behavior:73,lecture:72,helpful:74},comments:[]},
+{name:"A.S.M. Shakil Ahamed",img:"https://via.placeholder.com/120",courses:["CSE3202"],ratings:{behavior:77,lecture:76,helpful:78},comments:[]},
+{name:"Jabunnesa Jahan Sara",img:"https://via.placeholder.com/120",courses:["CSE1102"],ratings:{behavior:76,lecture:75,helpful:77},comments:[]},
+{name:"D.M Arif Afsar",img:"https://via.placeholder.com/120",courses:["CSE1204"],ratings:{behavior:74,lecture:73,helpful:75},comments:[]},
+{name:"Faniyam Maria Mansia",img:"https://via.placeholder.com/120",courses:["CSE1301"],ratings:{behavior:78,lecture:77,helpful:79},comments:[]}
 ]
-};
 
 function getColor(val){
 if(val<40)return '#e74c3c';
